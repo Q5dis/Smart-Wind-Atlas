@@ -5,14 +5,13 @@
     body, html {
       height: 100%;
       margin: 0;
+      display: flex;              /* 플렉스 사용 */
+      justify-content: center;    /* 가로 중앙 */
+      align-items: center;        /* 세로 중앙 */
     }
     .map-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: auto;  /* 가로 중앙 정렬 */
-      top: 50%;
-      transform: translateY(-50%); /* 세로 중앙 정렬 */
+      width: 550px;   /* 원하는 크기 */
+      height: 400px;
     }
     iframe {
       width: 100%;
@@ -23,7 +22,7 @@
 </head>
 <body>
   <div class="map-container">
-    <iframe src="test_map.html"></iframe>
+    <iframe src="test_map2.html"></iframe>
   </div>
 </body>
 </html>
