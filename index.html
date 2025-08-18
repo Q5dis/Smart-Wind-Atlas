@@ -64,12 +64,12 @@ button:hover {
  </div>
  
  <div class="map-container">
-    <iframe id="mapFrame" src="test_map2.html"></iframe>
+    <iframe id="mapFrame" src="map01.html"></iframe>
  </div>
 
 <script>
     let currentMap = 1;
-    const mapFiles = ['test_map2.html', 'test_map3.html', 'test_map4.html'];
+    const mapFiles = ['map01.html', 'test_map3.html', 'test_map4.html'];
     let markerDetails = {};
     let messageQueue = [];
 
@@ -83,7 +83,7 @@ button:hover {
     }
 
     // JSON 불러오기
-    fetch('top_marker_details.json')
+    fetch('marker_details.json')
         .then(response => response.json())
         .then(data => {
             markerDetails = data;
