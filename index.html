@@ -1,31 +1,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      display: flex;              /* 플렉스 사용 */
-      justify-content: right;    /* 가로 중앙 */
-      align-items: center;        /* 세로 중앙 */
-      padding-right: 3%;
-    }
-    .map-container {
-      width: 700px;   /* 원하는 크기 */
-      height: 700px;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
+ <style>
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    padding-right: 3%;
+}
+.map-container {
+    width: 700px;
+    height: 700px;
+}
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.info-panel {
+    width: 300px;
+    padding: 20px;
+    background: #f0f0f0;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 700px;
+}
+#markerInfo {
+    flex: 1;
+    margin-bottom: 20px;
+}
+.map-controls {
+    margin-top: auto;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background: #2E4057;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+button:hover {
+    background: #1a2530;
+}
+ </style>
 </head>
 <body>
-  <div>
-  </div>
-  <div class="map-container">
-    <iframe src="test_map2.html"></iframe>
-  </div>
+ <div class="info-panel">
+    <p>스마트윈드 아틀라스 지도입니다.</p>
+    <div id="markerInfo">
+        <p>이것은 스마트윈드 아틀라스 지도입니다.</p>
+        <p>마커를 클릭하면 정보가 여기에 표시됩니다.</p>
+    </div>
+    
+    <div class="map-controls">
+        <button onclick="switchMap()">다음 지도 보기</button>
+    </div>
+ </div>
+ 
+ <div class="map-container">
+    <iframe id="mapFrame" src="test_map2.html"></iframe>
+ </div>
+
+<script>
+    let currentMap = 1;
+    const mapFiles = ['test_map2.html', 'test_map3.html', 'test_map4.html'];
+    let markerDetails = {};
+    let messageQueue = [];
+
+    // 지도 전환
+    function switchMap() {
+        const iframe = document.getElementById('mapFrame');
+        currentMap = (currentMap % mapFiles.length) + 1;
+        iframe.src = mapFiles[currentMap - 1];
+        const button = document.querySelector('button');
+        button.textContent = `지도 ${currentMap}/${mapFiles.length} - 다음 보기`;
+    }
+
+    // JSON 불러오기
+    fetch('top_marker_details.json')
+        .then(response => response.json())
+        .then(data => {
+            markerDetails = data;
+            // fetch 전에 클릭된 메시지 처리
+            while(messageQueue.length > 0) {
+                processMarkerClick(messageQueue.shift());
+            }
+        });
+
+    // 마커 클릭 처리 함수
+    function processMarkerClick(eventData) {
+        const key = eventData.name; // JSON key와 동일
+        const details = markerDetails[key];
+
+        if (details) {
+            document.getElementById('markerInfo').innerHTML = `
+                <h3>${details.title}</h3>
+                <p><strong>위치:</strong> ${details.location}</p>
+                <hr>
+                <div style="white-space: pre-line; line-height: 1.6;">
+                    ${details.content.replace(/\n/g, '<br>')}
+                </div>
+            `;
+        } else {
+            document.getElementById('markerInfo').innerHTML = `
+                <h3>${eventData.name}</h3>
+                <p>지역: ${eventData.region}</p>
+                <p>발전량: ${eventData.capacity} MW</p>
+            `;
+        }
+    }
+
+    // 메시지 이벤트
+    window.addEventListener('message', function(event) {
+        console.log("Received message:", event.data);
+        if (event.data.type === 'markerClick') {
+            if (Object.keys(markerDetails).length === 0) {
+                // 아직 JSON 안 로드됨 → 큐에 저장
+                messageQueue.push(event.data);
+            } else {
+                processMarkerClick(event.data);
+            }
+        }
+    });
+</script>
+
+</script>
+
 </body>
 </html>
