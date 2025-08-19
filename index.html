@@ -1,136 +1,307 @@
 <!DOCTYPE html>
 <html>
 <head>
- <style>
-body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    padding-right: 3%;
-}
-.map-container {
-    width: 700px;
-    height: 700px;
-}
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-.info-panel {
-    width: 300px;
-    padding: 20px;
-    background: #f0f0f0;
-    margin-right: 20px;
-    display: flex;
-    flex-direction: column;
-    height: 700px;
-}
-#markerInfo {
-    flex: 1;
-    margin-bottom: 20px;
-}
-.map-controls {
-    margin-top: auto;
-}
-button {
-    width: 100%;
-    padding: 10px;
-    background: #2E4057;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-button:hover {
-    background: #1a2530;
-}
- </style>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: right;
+            align-items: center;
+        }
+
+        .map-container {
+            width: 700px;
+            height: 700px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .info-panel {
+            width: 300px;
+            padding: 20px;
+            background: #f9fbff;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 700px;
+            box-sizing: border-box;
+        }
+
+        .info-panel > p {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #markerInfo {
+            flex: 1;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #2E4057 #e0e0e0;
+        }
+
+        #markerInfo::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #markerInfo::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 3px;
+        }
+
+        #markerInfo::-webkit-scrollbar-thumb {
+            background: #2E4057;
+            border-radius: 3px;
+        }
+
+        #markerInfo::-webkit-scrollbar-thumb:hover {
+            background: #1a2530;
+        }
+
+        #markerInfo h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2E4057;
+            font-size: 18px;
+        }
+
+        #markerInfo p {
+            margin: 8px 0;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        #markerInfo hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #050c3b;
+        }
+
+        .map-controls {
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #f9fbff;
+            color:#4f7bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .info-panel button:hover { 
+            transition: box-shadow 0.3s ease; /* 기본 트랜지션 */
+            background: #4f7bff;
+            color: #ffffff;
+        }
+        .info-panel > p:first-of-type {
+            text-align: left;
+        }
+
+        .page1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding-right: 7%;
+        }
+        .page2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding-right: 7%;
+        }
+        .page3 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding-right: 7%;
+        }
+
+        .sidebar {
+            position: fixed;
+            bottom: 0;              
+            left: 0;
+            width: 250px;            
+            height: 100%;           
+            background: rgba(220, 255, 240, 0.6);
+            display: flex;
+            flex-direction: column;    
+            align-items: stretch;
+            z-index: 1000;
+        }
+
+        .sidebar button {
+            flex: 1;                
+            font-size: 130%;
+            border: none;
+            background: #4f7bff;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 0;       /* 모서리 각지게 */
+            transition: background 0.3s ease, color 0.3s ease, flex 0.9 ease; /* <-- 추가 */
+        }
+
+        .sidebar button.active {
+            background: #ffffff;
+            color: #0e2eae; 
+            flex: 1.3; 
+        }
+
+
+        .page {
+            display: none;
+            margin-left: 200px;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .page.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
- <div class="info-panel">
-    <p>스마트윈드 아틀라스 지도입니다.</p>
-    <div id="markerInfo">
-        <p>이것은 스마트윈드 아틀라스 지도입니다.</p>
-        <p>마커를 클릭하면 정보가 여기에 표시됩니다.</p>
+
+    <div class="sidebar">
+        <button data-page="page1" class="active" onclick="showPage('page1')">프로젝트 소개</button>
+        <button data-page="page2" onclick="showPage('page2')">S.W.A.M</button>
+        <button data-page="page3" onclick="showPage('page3')">팀 소개</button>
     </div>
-    
-    <div class="map-controls">
-        <button onclick="switchMap()">다음 지도 보기</button>
+
+
+    <div id="page1" class="page active">
+        <h2>Page 1: 프로젝트 소개</h2>
+        <p>프로젝트 설명 들어가는 자리</p>
     </div>
- </div>
- 
- <div class="map-container">
-    <iframe id="mapFrame" src="map01.html"></iframe>
- </div>
 
-<script>
-    let currentMap = 1;
-    const mapFiles = ['map01.html', 'test_map3.html', 'test_map4.html'];
-    let markerDetails = {};
-    let messageQueue = [];
+    <div id="page2" class="page">
+        <p></p>
+        <h1 style="display: inline; margin-right: 10px; color: #0e2eae;">Smart Wind Atlas Map</h1>
+        <p style="display: inline;">  입지-운영-확장성 통합 분석을 통한 풍력 에너지 최적화 연구</p>
+        <p></p>
+        <div class="page2">
+            <div class="info-panel">
+                <p>대한민국 상위 10 발전소</p>
+                <div id="markerInfo">
+                    <p>이것은 스마트윈드 아틀라스 지도입니다.</p>
+                    <p>마커를 클릭해서 상세정보를 확인해보세요.</p>
+                    <p>맵의 레이어를 클릭하시면,</p>
+                    <p>다양한 지형의 정보를 확인할 수 있습니다!</p>
+                </div>
+                <div class="map-controls">
+                    <button onclick="switchMap()">다음 지도 보기</button>
+                </div>
+            </div>
+            <div class="map-container">
+                <iframe id="mapFrame" src="map01.html"></iframe>
+            </div>
+        </div>
+    </div>
 
-    // 지도 전환
-    function switchMap() {
-        const iframe = document.getElementById('mapFrame');
-        currentMap = (currentMap % mapFiles.length) + 1;
-        iframe.src = mapFiles[currentMap - 1];
-        const button = document.querySelector('button');
-        button.textContent = `지도 ${currentMap}/${mapFiles.length} - 다음 보기`;
-    }
+    <div id="page3" class="page">
+        <h2>Page 3: 팀 소개</h2>
+        <p>팀 멤버 정보 들어가는 자리</p>
+    </div>
 
-    // JSON 불러오기
-    fetch('marker_details.json')
-        .then(response => response.json())
-        .then(data => {
-            markerDetails = data;
-            // fetch 전에 클릭된 메시지 처리
-            while(messageQueue.length > 0) {
-                processMarkerClick(messageQueue.shift());
+    <script>
+        function showPage(pageId) {
+            // 페이지 활성화
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            // 버튼 상태 업데이트
+            document.querySelectorAll('.sidebar button').forEach(btn => {
+                if (btn.dataset.page === pageId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+    </script>
+
+    <script>
+        let currentMap = 1;
+        const mapFiles = ['map01.html', 'map02.html', 'result_map.html'];
+        let markerDetails = {};
+        let messageQueue = [];
+
+        function switchMap() {
+            const iframe = document.getElementById('mapFrame');
+            const titles = ['대한민국 상위 10 발전소 분석', '대한민국 하위 10 발전소 분석', '최적의 발전단지 건설장소'];
+
+            currentMap = (currentMap % mapFiles.length) + 1;
+            iframe.src = mapFiles[currentMap - 1];
+
+            document.querySelector('.info-panel p').textContent = titles[currentMap - 1];
+            const button = document.querySelector('button');
+            //button.textContent = `지도 ${currentMap}/${mapFiles.length} - 다음 보기`;
+        }
+
+        fetch('marker_details.json')
+            .then(response => response.json())
+            .then(data => {
+                markerDetails = data;
+                while (messageQueue.length > 0) {
+                    processMarkerClick(messageQueue.shift());
+                }
+            });
+
+        function processMarkerClick(eventData) {
+            const key = eventData.name;
+            const details = markerDetails[key];
+
+            if (details) {
+                document.getElementById('markerInfo').innerHTML = `
+                    <h3>${details.title}</h3>
+                    <p><strong>위치:</strong> ${details.location}</p>
+                    <hr>
+                    <div style="white-space: pre-line; line-height: 1.6;">
+                        ${details.content.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            } else {
+                document.getElementById('markerInfo').innerHTML = `
+                    <h3>${eventData.name}</h3>
+                    <p>지역: ${eventData.region}</p>
+                    <p>발전량: ${eventData.capacity} MW</p>
+                `;
+            }
+        }
+
+        window.addEventListener('message', function(event) {
+            console.log("Received message:", event.data);
+            if (event.data.type === 'markerClick') {
+                if (Object.keys(markerDetails).length === 0) {
+                    messageQueue.push(event.data);
+                } else {
+                    processMarkerClick(event.data);
+                }
             }
         });
-
-    // 마커 클릭 처리 함수
-    function processMarkerClick(eventData) {
-        const key = eventData.name; // JSON key와 동일
-        const details = markerDetails[key];
-
-        if (details) {
-            document.getElementById('markerInfo').innerHTML = `
-                <h3>${details.title}</h3>
-                <p><strong>위치:</strong> ${details.location}</p>
-                <hr>
-                <div style="white-space: pre-line; line-height: 1.6;">
-                    ${details.content.replace(/\n/g, '<br>')}
-                </div>
-            `;
-        } else {
-            document.getElementById('markerInfo').innerHTML = `
-                <h3>${eventData.name}</h3>
-                <p>지역: ${eventData.region}</p>
-                <p>발전량: ${eventData.capacity} MW</p>
-            `;
-        }
-    }
-
-    // 메시지 이벤트
-    window.addEventListener('message', function(event) {
-        console.log("Received message:", event.data);
-        if (event.data.type === 'markerClick') {
-            if (Object.keys(markerDetails).length === 0) {
-                // 아직 JSON 안 로드됨 → 큐에 저장
-                messageQueue.push(event.data);
-            } else {
-                processMarkerClick(event.data);
-            }
-        }
-    });
-</script>
-
-</script>
+    </script>
 
 </body>
 </html>
