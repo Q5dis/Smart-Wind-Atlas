@@ -8,11 +8,8 @@
         body, html {
             height: 100%;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: Arial, sans-serif;
-            overflow-y: auto;
+            /* flex 레이아웃 제거하고 일반적인 문서 흐름 사용 */
         }
 
         /* 모든 페이지의 h1에 Michroma 적용 */
@@ -20,10 +17,52 @@
             font-family: "Michroma", sans-serif;
             font-weight: 700;
             font-style: normal;
-            text-align: center; /* 필요하면 중앙 정렬 유지 */
-            margin: 0; /* 필요시 기본 마진 제거 */
+            text-align: center;
+            margin: 0;
         }
 
+        /* 간결한 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            background-color: transparent;
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
 
         .map-container {
             width: 700px;
@@ -63,6 +102,7 @@
             padding-right: 10px;
             scrollbar-width: thin;
             scrollbar-color: #2E4057 #e0e0e0;
+            position: relative;
         }
 
         #markerInfo::-webkit-scrollbar {
@@ -86,7 +126,7 @@
         #markerInfo h3 {
             margin-top: 0;
             margin-bottom: 10px;
-            color: #2E4057;
+            color: #0e2eae;
             font-size: 18px;
         }
 
@@ -99,7 +139,17 @@
         #markerInfo hr {
             margin: 15px 0;
             border: none;
-            border-top: 1px solid #050c3b;
+            border-top: 1px solid #6f79a4;
+        }
+        #info-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            margin: 0;
+            width: 100%;
+            color: #868b90;
         }
 
         .map-controls {
@@ -170,40 +220,37 @@
 
         .page {
             display: none;
-            margin-left: 200px;
-            padding: 20px;
-            height: 100vh;
+            margin-left: 250px; /* 사이드바 너비만큼 마진 */
+            padding: 40px 20px; /* 상단 패딩 추가 */
+            min-height: 100vh; /* 최소 높이로 변경 */
             box-sizing: border-box;
             text-align: center;
-            overflow-y: auto;  
+            /* height: 100vh 제거 - 이게 핵심! */
         }
 
         .page.active {
             display: block;
         }
 
-        .page2{
+        .page2 {
             margin-left: 8%;
         }
 
         /* 모바일 대응 */
         @media (max-width: 768px) {
-            body, html {
-                display: block;
-            }
             h1 {
-            font-family: "Michroma", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-            text-align: center; /* 필요하면 중앙 정렬 유지 */
-            margin: 0; /* 필요시 기본 마진 제거 */
+                font-family: "Michroma", sans-serif;
+                font-weight: 400;
+                font-style: normal;
+                text-align: center;
+                margin: 0;
             }
 
             #page2 h1 {
                 font-family: "Michroma", sans-serif;
                 font-weight: 400;
                 font-style: normal;
-                font-size: 24px; /* 원하는 크기로 조절 */
+                font-size: 24px;
                 text-align: center;
                 margin: 0;
             }
@@ -214,9 +261,8 @@
                 top: 0;
                 left: 0;
                 width: 100%;
-                /*height: auto;*/
                 flex-direction: row;
-                height: 50px; /* 버튼 하나 높이로 고정 */
+                height: 50px;
                 z-index: 1000;
             }
 
@@ -229,17 +275,16 @@
             /* 페이지 내용이 버튼 아래에서 보이도록 */
             .page {
                 margin-left: 0;
-                /* padding-top: 60px; 메뉴 높이만큼 */
-                height: auto;
-                padding-top: 50px; /* 메뉴 높이와 동일하게 */
+                min-height: calc(100vh - 50px); /* 메뉴 높이 고려 */
+                padding-top: 70px; /* 메뉴 높이 + 여백 */
             }
 
             /* page2 세로 정렬 */
             .page2 {
                 flex-direction: column;
                 gap: 10px;
-                padding: 10px;
-                margin: 0%
+                padding: 70px 10px 10px 10px; /* 상단 패딩 추가 */
+                margin: 0;
             }
 
             .info-panel {
@@ -265,6 +310,16 @@
             .info-panel button {
                 font-size: 13px;
             }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+
+            .modal-close {
+                top: -35px;
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -277,48 +332,106 @@
     </div>
 
     <div id="page1" class="page active">
-        <h1 style="margin-top: 10%; margin-right: 10px; margin-bottom: 0%; color: #0e2eae;">Introducing</h1>
+        <img src="images/logo.png" style="margin-top: 10%; width: 129px; height: 86px;"/>
+        <h1 style="margin-top: 5%; margin-right: 10px; margin-bottom: 0%; color: #0e2eae;">Introducing</h1>
         <p style="margin-top: 3px; margin-bottom: 25px; color: #868b90;">S.W.A.M - Smart Wind Atlas Map</p>
-        <div style="max-width: 900px; margin: 0 auto; line-height: 1.7; font-size: 16px; color: #2E4057;">
-        <p>
-            스마트 윈드 아틀라스 맵은 한반도에 설치된 풍력발전소의 입지조건, 설비용량, 연간발전량을 분석하여 한 눈에 볼 수 있는 인터랙션 지도입니다. 해당 지도를 통해 한반도의 발전량 상위 10위, 하위 10위, 그리고 위를 토대로 제안하는 미래의 풍력단지의 위치와 세부조건을 확인해보세요.
-        </p>
+        <div style="max-width: 900px; margin: 0 auto; color: #2E4057;">
+            <p>
+                스마트 윈드 아틀라스 맵 S.W.A.M 은 한반도에 설치된 풍력발전소의 입지조건, 설비용량, 연간발전량 등을 분석하여 한 눈에 볼 수 있게 정리한 인터랙션 지도입니다. 해당 지도를 통해 한반도의 발전량 상위 10위, 하위 10위, 그리고 위를 토대로 제안하는 미래의 풍력단지의 위치와 세부조건을 확인해보세요.
+            </p>
+            
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+            <h2 style="margin-top: 30px; color: #0e2eae;">이용방법</h2>
+            <p style="margin-bottom: 0px;">
+                정보상자: 세부정보를 표시하는 역할의 컨테이너. 맵의 좌측(모바일의 경우 상단)에 위치
+            <br>
+                맵의 마커: 클릭 시 팝업으로 간략한 정보를 표시, 정보상자에선 해당 위치의 세부정보를 제공
+            <br>
+                레이어: 맵 우측 상단에 존재하는 레이어. 마커가 있는 발전소 근처의 기상조건을 맵 위에 히트맵으로 표현
+            </p>
+            
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+            <h2 style="margin-top: 30px; color: #0e2eae;">프로젝트 상세</h2>
+                <p>
+                우리나라는 2030년 재생에너지 발전 비중 20%라는 목표를 설정하며 탄소중립 실현을 위한 적극적인 정책을 추진하고 있습니다. 특히 풍력에너지는 태양광과 함께 재생에너지의 핵심 축으로 주목받고 있으며, 이에 따라 효율적인 풍력발전단지 입지 선정의 중요성이 더욱 부각되고 있습니다. 본 프로젝트는 기존 풍력발전소의 운영 데이터를 체계적으로 분석하여, 단순히 현황을 파악하는 것을 넘어서 미래 풍력발전단지 확장을 위한 실질적인 가이드라인을 제작하는 것을 목표로 시작했습니다.
+                </p>
 
-        <h2 style="margin-top: 30px; color: #0e2eae;">이용방법</h2>
-        <p>
-            맵의 마커: 클릭 시 간략한 정보가 표시됩니다. 상세보기를 누르시면 좌측 (모바일의 경우 상단) 정보상자에 자세한 설명이 표시됩니다.
-        </p>
-        <p>
-            레이어: 맵 우측 상단에 존재하는 레이어입니다. 마커가 있는 발전소 근처의 기상조건을 히트맵으로 확인해 보실 수 있습니다.
-        </p>
+                <div style="text-align: center; margin: 30px 0;">
+                <img src="images/chart_top_bottom.png" style="width: 80%; cursor: pointer;"/>
+                </div>
 
-        <h2 style="margin-top: 30px; color: #0e2eae;">프로젝트 결과</h2>
-        <p>
-            저희 프로젝트는 기존 발전소를 분석한 지도의 제공을 넘어 탄소절감을 위한 에너지 단지의 확장을 꿈꿔보았습니다. 다음과 같은 분석을 통해 우리는 5곳의 미래 풍력발전 단지를 제안해볼 수 있었습니다.
-        </p>
+                <p>
+                공공기관 포털에서 제공하는 2019년도 풍력발전단지 현황 데이터를 기반으로 분석한 결과, 국내 풍력발전소들 간에는 상당한 발전량 편차가 존재함을 확인했습니다. 설비용량을 기준으로 선별한 상위 10개 발전소와 하위 10개 발전소를 비교하면, 단순히 설비 규모의 차이를 넘어서는 복합적인 요인들이 발전량에 영향을 미치고 있음을 알 수 있습니다. 상위권 발전소들은 연평균 30-40%의 이용률을 보이는 반면, 하위권은 15-20%에 그치는 등 현저한 차이를 보입니다. 이러한 격차는 단순히 자연 조건의 차이만으로는 설명되지 않으며, 우리 팀은 이러한 발전량 차이를 만드는 핵심 요소들을 규명하기 위한 심층 분석에 착수했습니다.
+                </p>
 
-        <p>(하연님의 분석 차트 삽입)</p>
+                <div style="text-align: center; margin: 30px 0;">
+                <img src="images/chart_correlation.png" style="width: 80%; cursor: pointer;"/>
+                </div>
 
-        <p>
-            이러이러한 데이터를 분석한 결과, 이러이러한 조건에 이런 결과가 따른다는 것을 알 수 있었고 이러이러한 계산을 통해 이런 결과를 도출할 수 있었습니다.
-            해당 위치에 풍력발전소가 건설될 경우 화석연료 사용량은 5년 내 최대 N% 줄어들 것으로 전망됩니다.
-        </p>
-    </div>
+                <p>
+                상관관계 분석을 통해 얻은 가장 주목할 만한 발견은 풍속 자체가 발전량에 미치는 직접적인 영향이 예상보다 제한적이라는 점입니다. 이는 국내 풍력발전단지들이 이미 최소 풍속 조건(연평균 5m/s 이상)을 만족하는 지역에 건설되었기 때문으로 분석됩니다. 대신 고도가 발전량을 결정하는 가장 중요한 요인으로 나타났는데, 이는 고도가 높을수록 지면 마찰의 영향이 줄어들고 더 안정적인 풍류를 확보할 수 있기 때문입니다. 또한 발전단지의 부지 면적은 터빈 배치 밀도와 직결되어 발전 효율성에 상당한 영향을 미치며, 발전소의 건설 목적(상업용/시범용)에 따른 운영 방식의 차이도 발전량 격차의 주요 원인으로 확인되었습니다.
+                </p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                <img src="images/chart_windpower.png" style="width: 80%; cursor: pointer;"/>
+                </div>
+
+                <p>
+                풍속 데이터의 심층 분석 결과, 상위권과 하위권 발전소 지역 간 평균 풍속 차이는 통계적으로 유의미하지 않은 수준이었습니다. 이는 국내 풍력발전단지 건설 과정에서 이미 충분한 사전 풍황 조사를 통해 최소 기준 이상의 풍속 조건을 확보한 지역들을 선별했기 때문으로 해석됩니다. 하지만 이러한 결과가 풍속이 중요하지 않다는 의미는 아닙니다. 오히려 기본적인 풍속 조건이 만족된 상황에서는 다른 지형적, 기술적 요소들이 발전량을 좌우하는 결정적 변수로 작용한다는 점을 시사합니다. 특히 풍속의 일정성과 난류 강도 같은 풍질(wind quality) 요소들이 실제 발전량에 더 큰 영향을 미칠 수 있음을 확인했습니다.
+                </p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                <img src="images/chart_all.png" style="width: 80%; cursor: pointer;"/>
+                </div>
+
+                <p>
+                기존 발전소 데이터 분석 결과를 바탕으로, 미래 풍력발전단지 후보지 선정을 위한 종합적인 평가 기준을 수립했습니다. 1차적으로는 연평균 풍속 6m/s 이상, 해발고도 200m 이상이라는 기본 조건을 설정했으며, 2차 평가에서는 지형의 복잡도, 송전망과의 거리, 환경 영향성, 지역 수용성 등을 종합적으로 고려했습니다. 이러한 다단계 평가 과정을 거쳐 최종적으로 평창(강원), 청승(경북), 진도(전남), 보령(충남), 거제(경남) 등 5개 지역을 신규 풍력발전단지 최적 후보지로 선정했습니다. 각 후보지는 지역별 특성을 반영한 차별화된 개발 전략을 제시하며, 예상 발전량과 예상 공급가구수 등을 구체적으로 산정했습니다.
+                </p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                <img src="images/SWAM.jpg" style="width: 80%; cursor: pointer;"/>
+                </div>
+                <p>
+                이렇게 개발된 Smart Wind Atlas Map을 통해 사용자들은 기존 발전소의 운영 현황과 함께 미래 풍력에너지 개발 잠재력을 직관적으로 파악할 수 있으며, 생산 전기량에 비례하여 크기가 조절되는 바람개비 아이콘을 통해 각 지역의 발전 규모를 한눈에 비교할 수 있습니다.
+                </p>
+                <hr style="margin: 10%; border: none; border-top: 0px solid #a9a9a9;">
+                <div style="background: #ffffff; color: rgb(181, 181, 181); padding: 15px; margin-top: 30px; font-size: 16px; text-align: left;">
+                    <p style="margin: 0; line-height: 1.6;">
+                        <strong>사용된 기술 스택:</strong><br>
+                        • folium, numpy, pandas: 맵 생성 및 데이터처리<br>
+                        • notion, github, figma: 협업 및 디자인, 목업<br>
+                        • github pages, html,css,js: 웹 페이지 구현<br><br>
+
+                        <strong>데이터 출처:</strong><br>
+                        • 풍력발전기 발전량: 한국전력거래소 지역별 시간별 태양광 및 풍력 발전량 (2024.12.31)<br>
+                        • 풍력발전기 위치정보: 한국에너지공단 풍력기 위치정보 (2022.12.31), 풍력 발전산업협회 (2019)<br>
+                        • 지면고도데이터: 구글어스 지면고도<br>
+                        • 풍속데이터: 기상청 기상자료개방포털 방재기상관측(AWS) 자료<br>
+                        • 공급가구수 분석: 한국 서부 발전<br><br>
+                        
+                        <strong>발전량 특성분석:</strong><br>
+                        한국관광공사 대한민국구석구석, 횡성군청, 강원특별자치도청, 신재생에너지가이드, 일렉트릭파워, 전기저널, 한국풍력산업협회, 대한전기협회, 한국경제신문, 인더스트리뉴스, ESG경제신문, 공공데이터포털, 디지털서귀포문화대전, 효성 블로그<br><br>
+                        
+                        <strong>단지 추천 출처:</strong><br>
+                        • 전력경제, 에너지신문, 한국풍력산업협회<br>
+                        • 산업통상자원부 (풍력발전 관련 규제 정보)<br>
+                        • 환경부 (환경영향평가 관련 자료)<br>
+                        • 풍력발전소 설치 기준, 토지 이용 계획, 환경영향평가 절차, 지역 주민 수용성 관련 자료
+                        </p>
+                </div>
+                
+        </div>
     </div>
 
     <div id="page2" class="page">
-        <p></p>
         <h1 style="margin-right: 10px; margin-bottom: 0%; color: #0e2eae;">Smart Wind Atlas Map</h1>
-        <p style="margin-top: 3px; margin-bottom: 25px; color: #868b90;">  입지-운영-확장성 통합 분석을 통한 풍력 에너지 최적화 연구</p>
-        <p></p>
+        <p style="margin-top: 3px; margin-bottom: 25px; color: #868b90;">입지-운영-확장성 통합 분석을 통한 풍력 에너지 최적화 연구</p>
         <div class="page2">
             <div class="info-panel">
-                <p>대한민국 상위 10 발전소</p>
+                <p>😃 대한민국 상위 10 발전소</p>
                 <div id="markerInfo">
-                    <p>이것은 스마트윈드 아틀라스 지도입니다.</p>
-                    <p>마커를 클릭해서 상세정보를 확인해보세요.</p>
-                    <p>맵의 레이어를 클릭하시면,</p>
-                    <p>다양한 지형의 정보를 확인할 수 있습니다!</p>
+                    <p id="info-text">마커 클릭 후<br>상세보기를 누르시면<br>
+                        이곳에 자세한 정보가<br>표시됩니다</p>
                 </div>
                 <div class="map-controls">
                     <button onclick="switchMap()">다음 지도 보기</button>
@@ -331,8 +444,80 @@
     </div>
 
     <div id="page3" class="page">
-        <h1 style="margin-top: 10%; margin-right: 10px; margin-bottom: 0%; color: #0e2eae;">WindBando</h1>
-        <p>팀 멤버 정보 들어가는 자리</p>
+        <img src="images/logo.png" style="margin-top: 10%; width: 129px; height: 86px;"/>
+        <h1 style="margin-top: 5%; margin-right: 10px; margin-bottom: 0%; color: #0e2eae;">WindBando</h1>
+        <p style="margin-top: 3px; margin-bottom: 25px; color: #868b90;">윈드반도의 바람(願), 한반도의 바람(風)</p>
+
+        <p style="max-width: 900px; margin: 0 auto; color: #2E4057;">
+        한반도의 지형과 바람을 형상화한 팀 윈드반도의 로고입니다.<br>대표적 친환경 에너지인 풍력발전의 확장으로<br>에너지의 새로운 바람이 불길 바란다는 의미를 담았습니다.</p>
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+            <h2 style="margin-top: 30px; color: #0e2eae;">팀장 및 프로젝트 총괄</h2>
+
+            <p>
+                <b>김진선 Jin Sun KIM</b>
+            </p>
+            <p style="margin-bottom: 10px; font-size: 20px; color: #2E4057;">
+                “다른 전공의 언어를 데이터와 프로토타입으로 번역해,<br>아이디어를 성과로 묶었습니다.”
+            </p>
+            <p style="color: #9c9c9c;">
+                <br>
+                에너지에 대한 깊은 이해와 경험으로 프로젝트를 총괄/지휘<br>
+                <br><br>
+                contact: wlsr5678@naver.com
+            </p>
+            
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+            <h2 style="margin-top: 30px; color: #0e2eae;">핵심 데이터 분석 및 자료담당</h2>
+
+            <p>
+                <b>최하연 Ha Yeon CHOI</b>
+            </p>
+            <p style="margin-bottom: 10px; font-size: 19px; color: #2E4057;">
+                "이번 프로젝트를 진행하면서 <br>기대 이상으로 퀄리티 높은 결과를<br>얻을 수 있어서 매우 만족스러웠습니다.<br><br>
+                특히 데이터 수집 과정이 생각보다 어렵다는 점을<br>직접 경험하며 데이터의 중요성을 다시 한 번 느꼈습니다.<br>
+                또한 강의에서 배운 내용뿐만 아니라, 추가로 다양한<br>그래프 제작에 도전하면서 스스로 성장할 수 있었고,<br><br>
+                새로운 시도를 해본 점이 큰 보람으로 남습니다.<br>
+                앞으로도 이런 도전을 이어가고 싶습니다!"
+            </p>
+            <p style="color: #9c9c9c;">
+                <br>
+                파이썬에 대한 전문 지식으로 데이터를 가공 및 분석, 신뢰도 높은 결과 도출<br>
+                <br><br>
+                contact: gkdus7844@naver.com
+            </p>
+
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+            <h2 style="margin-top: 30px; color: #0e2eae;">기술구현 및 디자인</h2>
+
+            <p>
+                <b>오왕경 Wang Kyeong OH</b>
+            </p>
+            <p style="margin-bottom: 10px; font-size: 20px; color: #2E4057;">
+                "이번 기회에 신재생 에너지라는 주제, 그 중에서도<br>
+                풍력발전 분야가 어떻게 발전해왔고 현재는 어떤 상황인지,<br>
+                어떻게 해야 앞으로 재생에너지를 효과적으로<br>
+                확장시킬 수 있는지에 대해 고민해볼 수 있었습니다.<br><br>
+                기술의 발전에 따라 떼놓을 수 없는 환경문제, <br>
+                '지속가능' 이라는 주제는 이제 현대인의 필수교양이 되어야 합니다."
+            </p>
+            <p style="color: #9c9c9c;">
+                <br>
+                데이터를 맵으로 구현, 최종적으로 github pages로 배포
+                <br>그 외 디자인 및 그래픽 요소 담당<br>
+                <br><br>
+                contact: qowkqowk@gmail.com
+            </p>
+            
+            <hr style="margin: 20%; border: none; border-top: 1px solid #a9a9a9;">
+                <p style="color: #0e2eae; font-size: 25;">- S.W.A.M 프로젝트 레포지토리 -</p>
+                <a href="https://github.com/Q5dis/smartwindatlas">
+                    https://github.com/Q5dis/smartwindatlas
+                </a>
+                        
+
+        </div>
     </div>
 
     <script>
@@ -354,7 +539,7 @@
 
         function switchMap() {
             const iframe = document.getElementById('mapFrame');
-            const titles = ['대한민국 상위 10 발전소 분석', '대한민국 하위 10 발전소 분석', '최적의 발전단지 건설장소'];
+            const titles = ['😃 대한민국 상위 10 발전소', '😐 대한민국 하위 10 발전소', '🧚 최적의 발전단지 건설장소'];
 
             currentMap = (currentMap % mapFiles.length) + 1;
             iframe.src = mapFiles[currentMap - 1];
@@ -365,14 +550,15 @@
         let markerDetails = {};
         let messageQueue = [];
 
+        
         fetch('marker_details.json')
-            .then(response => response.json())
-            .then(data => {
-                markerDetails = data;
-                while (messageQueue.length > 0) {
-                    processMarkerClick(messageQueue.shift());
-                }
-            });
+             .then(response => response.json())
+             .then(data => {
+                 markerDetails = data;
+                 while (messageQueue.length > 0) {
+                     processMarkerClick(messageQueue.shift());
+                 }
+             });
 
         function processMarkerClick(eventData) {
             const key = eventData.name;
@@ -389,11 +575,9 @@
                 `;
             } else {
                 document.getElementById('markerInfo').innerHTML = `
-                    <h3>${eventData.name}</h3>
-                    <p>지역: ${eventData.region}</p>
-                    <p>발전량: ${eventData.capacity} MW</p>
+                    <p style="text-align: center; color: #666;">정보가 없습니다</p>
                 `;
-            }
+                }
         }
 
         window.addEventListener('message', function(event) {
