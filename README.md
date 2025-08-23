@@ -1,6 +1,6 @@
 # S.W.A.M - Smart Wind Atlas Map
   
-![프로젝트 로고](images/logo.png)
+![프로젝트 로고](images/SWAM.jpeg)
   
 ## 프로젝트 소개
 스마트 윈드 아틀라스 맵(S.W.A.M)은 한반도에 설치된 풍력발전소의 입지조건, 설비용량, 연간발전량 등을 분석하여 한눈에 볼 수 있는 인터랙션 지도입니다.  
