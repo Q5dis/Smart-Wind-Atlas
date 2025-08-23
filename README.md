@@ -58,8 +58,3 @@
 ### 기술 구현 및 디자인
 **오왕경 Wang Kyeong OH**   
 **Contact:** qowkqowk@gmail.com  
-
----
-
-## 📌 프로젝트 링크
-[https://q5dis.github.io/smartwindatlas/](https://q5dis.github.io/smartwindatlas/)
