@@ -14,7 +14,7 @@
 - **레이어**: 맵 우측 상단 레이어를 통해 발전소 근처 기상조건을 히트맵으로 시각화
 
 **해당 링크를 클릭하시면 결과를 바로 확인해보실 수 있습니다!**
-https://q5dis.github.io/smartwindatlas/
+**https://q5dis.github.io/smartwindatlas/**
 
 ---
 
