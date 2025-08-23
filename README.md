@@ -48,18 +48,15 @@
 ## 👩‍💻 팀 소개
 
 ### 팀장 & 프로젝트 총괄
-**김진선 Jin Sun KIM**  
-> “다른 전공의 언어를 데이터와 프로토타입으로 번역해, 아이디어를 성과로 묶었습니다.”  
+**김진선 Jin Sun KIM**   
 **Contact:** wlsr5678@naver.com  
 
 ### 핵심 데이터 분석 및 자료 담당
-**최하연 Ha Yeon CHOI**  
-> “데이터 수집과 분석을 통해 스스로 성장하며, 퀄리티 높은 결과를 얻었습니다.”  
+**최하연 Ha Yeon CHOI**    
 **Contact:** gkdus7844@naver.com  
 
 ### 기술 구현 및 디자인
-**오왕경 Wang Kyeong OH**  
-> “재생에너지와 풍력발전 분야를 지도화하며, 환경과 기술을 함께 고민했습니다.”  
+**오왕경 Wang Kyeong OH**   
 **Contact:** qowkqowk@gmail.com  
 
 ---
